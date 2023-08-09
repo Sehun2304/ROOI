@@ -31,6 +31,11 @@ public class UserController {
         return "signup";
     }
 
+    @GetMapping("/profile")
+    public String profilePage() {
+        return "profile";
+    }
+
     @PostMapping("/signup")
     public String signup(@ModelAttribute SignupRequestDto requestDto) { //Dto -> 로 생성자 생성
 

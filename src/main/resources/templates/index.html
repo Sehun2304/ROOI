@@ -101,7 +101,7 @@
   <h1>Trello Board</h1>
   <div class="topbar-buttons">
     <button onclick="logout()">Logout</button>
-    <button onclick="openProfile()">My Profile</button>
+    <button onclick="Profile()">My Profile</button>
   </div>
 </div>
 <div class="board-container">
@@ -125,17 +125,17 @@
   }
 
   function manageMembers() {
-    // Implement your manage members logic here
+    window.location.href = "manageMenbers.html";
   }
 
   function logout() {
     // 토큰 삭제
     Cookies.remove('Authorization', { path: '/' });
-    window.location.href = "/api/user/login-page";
+    window.location.href = "/user/login-page";
   }
 
-  function openProfile() {
-    // Implement your profile logic here
+  function Profile() {
+    window.location.href = "profile.html";
   }
 
   function deleteColumn(button) {
