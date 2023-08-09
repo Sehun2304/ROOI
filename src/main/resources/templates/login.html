@@ -18,7 +18,7 @@
   <div id="login-title">ROOI</div>
   <br>
   <br>
-  <button id="login-id-btn" onclick="location.href='/api/user/signup'">
+  <button id="login-id-btn" onclick="location.href='/user/signup'">
     SIGNUP
   </button>
   <div>
@@ -63,7 +63,7 @@
             })
             .fail(function (xhr, textStatus, errorThrown) {
               console.log('statusCode: ' + xhr.status);
-              window.location.href = host + '/api/user/login-page?error'
+              window.location.href = host + '/user/login-page?error'
             });
   }
 </script>

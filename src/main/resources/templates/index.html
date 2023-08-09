@@ -1,42 +1,170 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-  <script src="/js/basic.js"></script>
-  <title>ROOI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trello Board</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #333;
+      color: white;
+      padding: 0px;
+      position: fixed;
+      top: 100px; /* 상단바의 높이만큼 여백 추가 */
+      left: 0;
+      bottom: 0;
+      overflow-y: auto;
+    }
+    .sidebar-buttons {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .topbar {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .topbar-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .board-container {
+      display: flex;
+      padding: 20px;
+      margin-top: 100px; /* To avoid overlapping with topbar */
+      margin-left: 250px; /* To avoid overlapping with sidebar */
+    }
+    .board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .list {
+      background-color: #f4f4f4;
+      width: 250px;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .list-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .delete-board-btn {
+      color: #ff0000;
+      cursor: pointer;
+    }
+    .add-task-btn {
+      color: #007bff;
+      cursor: pointer;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      padding: 5px;
+      margin: 5px 0;
+      border-radius: 3px;
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+    }
+  </style>
 </head>
 <body>
-<div class="header" style="position:relative;">
-  <div id="login-true" style="display: none">
-    <div id="header-title-login-user">
-      <span th:text="${username}"></span> 님의
-    </div>
-    <div id="header-title-select-shop">
-      ROOI
-    </div>
-    <a id="login-text" href="javascript:logout()">
-      LOGOUT
-    </a>
-  </div>
-  <div id="login-false" >
-    <div id="header-title-select-shop">
-      ROOI
-    </div>
-    <a id="sign-text" href="/api/user/signup">
-      SIGNUP
-    </a>
-    <a id="login-text" href="/api/user/login-page">
-      LOGIN
-    </a>
+<div class="sidebar">
+  <div class="sidebar-buttons">
+    <button onclick="inviteMembers()">Invite Members</button>
+    <button onclick="manageMembers()">Manage Members</button>
+    <button onclick="addColumn()">Add Board</button>
   </div>
 </div>
+<div class="topbar">
+  <h1>Trello Board</h1>
+  <div class="topbar-buttons">
+    <button onclick="logout()">Logout</button>
+    <button onclick="Profile()">My Profile</button>
+  </div>
+</div>
+<div class="board-container">
+  <div class="board">
+    <div class="list">
+      <div class="list-title">
+        <span>To Do</span>
+        <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
+      </div>
+      <div class="card">Task 1</div>
+      <div class="card">Task 2</div>
+      <div class="add-task-btn" onclick="addTask(this)">+</div>
+    </div>
+  </div>
+</div>
+<!--로그아웃 구현 스크립트-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+<script>
+  function inviteMembers() {
+    // Implement your invite members logic here
+  }
+
+  function manageMembers() {
+    window.location.href = "manageMenbers.html";
+  }
+
+  function logout() {
+    // 토큰 삭제
+    Cookies.remove('Authorization', { path: '/' });
+    window.location.href = "/user/login-page";
+  }
+
+  function Profile() {
+    window.location.href = "profile.html";
+  }
+
+  function deleteColumn(button) {
+    const list = button.parentNode.parentNode;
+    list.remove();
+  }
+
+  function addTask(button) {
+    const list = button.parentNode;
+    const newTask = document.createElement('div');
+    newTask.className = 'card';
+    newTask.textContent = 'New Task';
+    list.insertBefore(newTask, button);
+  }
+
+  function addColumn() {
+    const columnContainer = document.querySelector('.board');
+    const newColumn = document.createElement('div');
+    newColumn.className = 'list';
+    newColumn.innerHTML = `
+        <div class="list-title">
+          <span>New Column</span>
+          <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
+        </div>
+        <div class="card">New Task</div>
+        <div class="add-task-btn" onclick="addTask(this)">+</div>
+      `;
+    columnContainer.appendChild(newColumn);
+  }
+</script>
 </body>
 </html>

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -21,22 +21,27 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/user/login-page")
+    @GetMapping("/login-page")
     public String loginPage() {
         return "login";
     }
 
-    @GetMapping("/user/signup")
+    @GetMapping("/signup")
     public String signupPage() {
         return "signup";
     }
 
-    @PostMapping("/user/signup")
+    @GetMapping("/profile")
+    public String profilePage() {
+        return "profile";
+    }
+
+    @PostMapping("/signup")
     public String signup(@ModelAttribute SignupRequestDto requestDto) { //Dto -> 로 생성자 생성
 
         userService.signup(requestDto);
 
-        return "redirect:/api/user/login-page";
+        return "redirect:/user/login-page";
 
     }
 //    필터에서 처리
