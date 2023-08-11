@@ -38,14 +38,14 @@ public class ColumnsController {
     }
 
     // 보드에서 모든 칼럼 조회
-    @GetMapping("/board/{boardId}/columns")
-    public ResponseEntity<List<ColumnsResponseDto>> getColumnsByBoard(@PathVariable Long boardId) {
-        List<ColumnsResponseDto> columnsResponseDtos = columnsService.getColumnsByBoardId(boardId);
-        if (columnsResponseDtos.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(columnsResponseDtos);
-    }
+//    @GetMapping("/board/{boardId}/columns")
+//    public ResponseEntity<List<ColumnsResponseDto>> getColumnsByBoard(@PathVariable Long boardId) {
+//        List<ColumnsResponseDto> columnsResponseDtos = columnsService.getColumnsByBoardId(boardId);
+//        if (columnsResponseDtos.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(columnsResponseDtos);
+//    }
 
     @PostMapping("/board/{boardId}/columns/{columsid}")
     public ColumnsResponseDto createColumns (@RequestBody ColumnsRequestDto columnsRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
