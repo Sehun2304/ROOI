@@ -1,12 +1,8 @@
 package com.rooi.rooi.service;
 
-import com.rooi.rooi.dto.ApiResponseDto;
-import com.rooi.rooi.dto.BoardRequestDto;
-import com.rooi.rooi.dto.BoardResponseDto;
-import com.rooi.rooi.dto.InviteRequestDto;
+import com.rooi.rooi.dto.*;
 import com.rooi.rooi.entity.Board;
 import com.rooi.rooi.entity.User;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -74,4 +70,11 @@ public interface BoardService {
 	 * @return 권한이 있다면 true
 	 */
 	boolean isPermission(Long boardId, String username);
+
+	/**
+	 * 권한이 있는 유저 리스트 가져오기
+	 * @param id 보드 id
+	 * @return 권한 유저 리스트
+	 */
+	List<InviteResponseDto> getInviteUserList(Long id);
 }

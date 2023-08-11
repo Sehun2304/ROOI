@@ -1,11 +1,6 @@
 package com.rooi.rooi.controller;
 
-import com.rooi.rooi.dto.ApiResponseDto;
-import com.rooi.rooi.dto.BoardRequestDto;
-import com.rooi.rooi.dto.BoardResponseDto;
-import com.rooi.rooi.dto.InviteRequestDto;
-import com.rooi.rooi.entity.Board;
-import com.rooi.rooi.entity.Permission;
+import com.rooi.rooi.dto.*;
 import com.rooi.rooi.security.UserDetailsImpl;
 import com.rooi.rooi.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +33,8 @@ public class BoardController {
 		return ResponseEntity.status(HttpStatus.OK).body(boardService.getBoardById(id));
 	}
 
-	// 보드 생성 포스트맵핑 Id 추가
-	@PostMapping("/{id}")
+	// 보드 생성
+	@PostMapping
 	public ResponseEntity<?> createBoard(@RequestBody BoardRequestDto requestDto,
 	                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
 		log.info("Controller - createBoard");
@@ -84,5 +79,11 @@ public class BoardController {
 			log.info("Controller - inviteUser 메서드 에러 처리");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(e.getMessage(), HttpStatus.BAD_REQUEST.value()));
 		}
+	}
+
+	@GetMapping("/{id}/invite")
+	public List<InviteResponseDto> getInviteUserList(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+		log.info("Controller - getInviteUserList");
+		return boardService.getInviteUserList(id);
 	}
 }

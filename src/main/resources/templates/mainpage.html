@@ -22,9 +22,6 @@
             text-decoration-line: none;
         }
 
-        #post-list {
-            margin-top: 30px;
-        }
 
     </style>
 
@@ -44,7 +41,7 @@
         </div>
 
         <div class="col-4 container justify-content-end">
-            <a href="/create/board"> <!-- 보드 작성 페이지 url 입력 -->
+            <a href="/boards/create"> <!-- 보드 작성 페이지 url 입력 -->
                 <button type="submit" class="btn btn-light" id="newpost-btn">보드 작성</button>
             </a>
             <a href="/user/profile"> <!-- 마이페이지 url 입력 -->
@@ -114,7 +111,7 @@
 
                         let id = data[i].id
 
-                        let temp_html = `<a href = "/boards/${id}" class= "col-3" style="text-decoration: none"> <!-- 보드 상제조회 url 입력 -->
+                        let temp_html = `<a href = "/boards/${id}" class= "col-3" style="text-decoration: none; margin-top: 30px"> <!-- 보드 상제조회 url 입력 -->
                                             <div class="card h-200 shadow feed border-0" style="height: 120px; background-color: ${boardColor}">
                                                 <div class="card-body">
                                                     <h5 class="card-title">${title}</h5>

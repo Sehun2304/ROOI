@@ -1,9 +1,6 @@
 package com.rooi.rooi.service;
 
-import com.rooi.rooi.dto.ApiResponseDto;
-import com.rooi.rooi.dto.BoardRequestDto;
-import com.rooi.rooi.dto.BoardResponseDto;
-import com.rooi.rooi.dto.InviteRequestDto;
+import com.rooi.rooi.dto.*;
 import com.rooi.rooi.entity.Board;
 import com.rooi.rooi.entity.Permission;
 import com.rooi.rooi.entity.User;
@@ -142,5 +139,16 @@ public class BoardServiceImpl implements BoardService {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public List<InviteResponseDto> getInviteUserList(Long id) {
+		List<Permission> boardPermissionList = permissionRepository.findAllByBoardId(id);
+		List<InviteResponseDto> inviteResponseDtoList = new ArrayList<>();
+
+		for (Permission p : boardPermissionList) {
+			inviteResponseDtoList.add(new InviteResponseDto(p));
+		}
+		return inviteResponseDtoList;
 	}
 }

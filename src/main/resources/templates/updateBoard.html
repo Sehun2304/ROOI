@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            padding: 70px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+        }
+
+        .container input[type="text"] {
+            display: block;
+            margin: 20px auto;
+            width: 90%;
+            height: auto;
+            line-height: normal;
+            padding: .8em .5em;
+            font-family: inherit;
+            border: 1px solid #999;
+            border-radius: 0;
+            outline-style: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        button {
+            background-color: #466481;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #354e69;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>나만의 보드를 관리하세요!</h1>
+    <div>
+        <label for="color">색상</label>
+        <input type="color" id="color" value="#ffffff"/>
+    </div>
+    <div>
+        <input type="text" placeholder="보드 이름" onfocus="this.placeholder=''" onblur="this.placeholder='보드 이름'"
+               id="title" required>
+    </div>
+    <div>
+        <input type="text" placeholder="보드 설명" onfocus="this.placeholder=''" onblur="this.placeholder='보드 설명'"
+               id="contents" required>
+    </div>
+    <button onclick="updateBoard()">수정하기</button>
+</div>
+<script>
+    function updateBoard() {
+        var title = document.getElementById("title").value;
+        var contents = document.getElementById("contents").value;
+        var color = document.getElementById("color").value;
+
+        var updatedBoard = {
+            title: title,
+            contents: contents,
+            color: color
+        };
+
+        var boardId = window.location.pathname.split('/').pop();
+
+        try {
+            fetch(`/api/boards/${boardId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedBoard)
+            })
+                .then(response => response.json())
+                .then(data => console.log('Success:', data))
+            alert(`보드 "${title}" 이(가) 수정 완료되었습니다!`);
+            location.reload();
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>

@@ -20,7 +20,12 @@ public class ColumnsService {
     private final ColumnsRepository columnsRepository;
     private final BoardRepository boardRepository;
 
-
+    // 해당 보드의 컬럼 전체 조회 API
+    public List<ColumnsResponseDto> getAllColumns(Long boardId) {
+        return columnsRepository.findAllByBoardId(boardId).stream()
+                .map(ColumnsResponseDto::new)
+                .collect(Collectors.toList());
+    }
 
     public ColumnsResponseDto getColumns(Long columnsId) {
         Columns columns = columnsRepository.findById(columnsId).orElseThrow(null);
@@ -29,14 +34,6 @@ public class ColumnsService {
             return new ColumnsResponseDto(columns);
         }else {
             return null;}
-    }
-
-    // 보드에서 해당 아이디의 모든 칼럼을 조회하는 메서드
-    public List<ColumnsResponseDto> getColumnsByBoardId(Long boardId) {
-        List<Columns> columns = columnsRepository.findByBoardId(boardId);
-        return columns.stream()
-                .map(ColumnsResponseDto::new) // Assuming ColumnsResponseDto constructor accepts Columns entity
-                .collect(Collectors.toList());
     }
 
     public ColumnsResponseDto createColumns(ColumnsRequestDto requestDto, User user){
@@ -67,5 +64,5 @@ public class ColumnsService {
     }
 
 
-    }
+}
 

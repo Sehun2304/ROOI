@@ -20,6 +20,12 @@ public class ColumnsController {
 
     private final ColumnsService columnsService;
 
+    // 모든 컬럼 조회 API
+    @GetMapping("/all/{boardId}")
+    public List<ColumnsResponseDto> getPosts(@PathVariable Long boardId){
+        return columnsService.getAllColumns(boardId);
+    }
+
     // 컬럼 조회 API
     @GetMapping("/columns/{columnsId}")
     public ResponseEntity<ColumnsResponseDto> getColumns(@PathVariable Long columnsId) {

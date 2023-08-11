@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <title>Trello Board</title>
   <style>
     body {
@@ -87,53 +88,65 @@
       border-radius: 3px;
       box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
     }
+
+    #profile-btn {
+      margin-right: 30px;
+    }
   </style>
 </head>
-<body>
-
-<!--상단바-->
-<div class="topbar">
-  <h1>Trello Board</h1>
-  <div class="topbar-buttons">
-    <button onclick="logout()">Logout</button>
-    <button onclick="openProfile()">My Profile</button>
-  </div>
-</div>
-
-
-<!--사이드바-->
-<div class="sidebar">
-  <div class="sidebar-buttons">
-    <button onclick="inviteMembers()">Invite Members</button>
-    <button onclick="manageMembers()">Manage Members</button>
-    <button onclick="addColumn()">Add Column</button>
-  </div>
-</div>
-
-<!--칼럼과 카드-->
-<div class="column-container">
-  <div class="column">
-    <div class="list">
-      <a href = api/columns/${columnsId} class= "col-3">
-        <div class="list-title">
-          <span>${title}</span>
-          <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
-        </div>
+<body id="dynamic-body">
+  <div class="topbar">
+    <h1><span th:text="${board.title}">Trello Board</span></h1>
+    <div class="topbar-buttons">
+      <a href = "/">
+        <button >home</button>
       </a>
-      <div>
-        <a href = api/${columnsId}/card/${Id} class= "col-3">
-          <div class="card">${title}</div>
-          <div class="card">${title}</div>
-          <div class="add-task-btn" onclick="addTask(this)">+</div>
+      <button onclick="logout()">Logout</button>
+      <button onclick="openProfile()" id="profile-btn">My Profile</button>
+    </div>
+  </div>
+
+
+  <!--사이드바-->
+  <div class="sidebar">
+    <div class="sidebar-buttons">
+      <button onclick="inviteMembers()">Invite Members</button>
+      <button onclick="manageMembers()">Manage Members</button>
+      <button onclick="addColumn()">Add Column</button>
+    </div>
+  </div>
+
+  <!--칼럼과 카드-->
+  <div class="column-container" id="columns">
+    <div class="column">
+      <div class="list" id = "columns-list">
+        <a href = api/columns/${columnsId} class= "col-3">
+          <div class="list-title">
+            <span>${title}</span>
+            <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
+          </div>
         </a>
+        <div id="card-list">
+          <a href = api/${columnsId}/card/${Id} class= "col-3">
+            <div class="card">${title}</div>
+          </a>
+        </div>
+        <div class="add-task-btn" onclick="addTask(this)">+</div>
       </div>
     </div>
   </div>
-</div>
 
+<!--상단바-->
 
 <!--로그아웃 구현 스크립트-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+
+  <!--동적으로 보드의 배경색 바꾸어주는 로직-->
+  <script th:inline="javascript">
+    var backgroundColor = [[${board.boardColor}]];
+    document.getElementById('dynamic-body').style.backgroundColor = backgroundColor;
+  </script>
+
 <script>
   function inviteMembers() {
     window.location.href = "/post/invite";
@@ -185,19 +198,99 @@
     list.insertBefore(newTask, button);
   }
 
+  // function addColumn() {
+  //   const columnContainer = document.querySelector('.board');
+  //   const newColumn = document.createElement('div');
+  //   newColumn.className = 'list';
+  //   newColumn.innerHTML = `
+  //       <div class="list-title">
+  //         <span>New Column</span>
+  //         <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
+  //       </div>
+  //       <div class="card">New Task</div>
+  //       <div class="add-task-btn" onclick="addTask(this)">+</div>
+  //     `;
+  //   columnContainer.appendChild(newColumn);
+  // }
+
   function addColumn() {
-    const columnContainer = document.querySelector('.board');
-    const newColumn = document.createElement('div');
-    newColumn.className = 'list';
-    newColumn.innerHTML = `
-        <div class="list-title">
-          <span>New Column</span>
-          <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
-        </div>
-        <div class="card">New Task</div>
-        <div class="add-task-btn" onclick="addTask(this)">+</div>
-      `;
-    columnContainer.appendChild(newColumn);
+    let data = {
+      boardId : board_id,
+      title : "new Column"
+    }
+
+    $.ajax({
+      type: "POST",
+      url:'/api/columns',
+      data: JSON.stringify(data),
+      contentType:"application/json; charset=urf-8",
+      dataType:"json"
+    }).done(function(res){
+      console.log(res)
+      console.log(res.status)
+      window.location.reload()
+    }).fail(function (request, status, error){
+      console.log(status)
+      console.log(error)
+      alert("에러가 발생했습니다.");
+    });
+  }
+
+  // ============ 모든 칼럼 및 카드 조회 ===============
+  let board_id = [[${board.id}]];
+
+  $(document).ready(function () {
+    getColumnInfo();
+  });
+  function getColumnInfo() {
+    console.log("함수 호출");
+    fetch('/api/columns/all/' + board_id, {
+      method: 'GET',
+      headers: {'Content-Type': 'application/json'}
+    })
+            .then(response => response.json())
+            .then(data => {
+              $('#columns').empty();
+              for (let i = 0; i < data.length; i++) {
+                console.log(data[i])
+                let columnsId = data[i].id;
+                let title = data[i].title;
+                let cardList = data[i].cardList;
+                let temp_html1 = `
+                                      <div class="column" style="text-decoration-line: none;">
+                                            <div class="list" id = "columns-list" >
+                                              <a href = api/columns/${columnsId} class= "col-3">
+                                                <div class="list-title">
+                                                  <span>${title}</span>
+                                                  <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
+                                                </div>
+                                              </a>
+                                              <div id="card-list">`
+
+
+                // 각 데이터 요소마다 다른 HTML 구조 생성
+                let cardList_html = '';
+                for (let j = cardList.length - 1; j >= 0; j--) {
+                  let cardTitle = cardList[j].title;
+                  let cardId = cardList[j].id;
+
+                  let temp_html2 = `<a href = api/${columnsId}/card/${cardId} class= "col-3" style="text-decoration-line: none;">
+                                  <div class="card">${cardTitle}</div>
+                                </a>`
+
+                  cardList_html += temp_html2;
+                }
+
+                let temp_html3 = `</div>
+                                              <div class="add-task-btn" onclick="addTask(this)">+</div>
+                                            </div>
+                                          </div>`
+
+                let temp_html = `${temp_html1}${cardList_html}${temp_html3}`
+                $('#columns').append(temp_html);
+
+              }
+            });
   }
 
   // 페이지 로딩 시 실행될 함수
