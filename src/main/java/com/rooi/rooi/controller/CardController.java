@@ -30,6 +30,7 @@ public class CardController {
 
     // 카드 조회 -> 컬럼에서 조회
 
+
     // 카드 수정 API
     @PutMapping("/card/{id}")
     public ResponseEntity<ApiResponseDto> updateCard(@PathVariable Long id, @RequestBody CardRequestDto cardRequestDto) {

@@ -11,15 +11,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/columns")
+@RequestMapping("/api")
 @AllArgsConstructor
 public class ColumnsController {
 
     private final ColumnsService columnsService;
 
     // 컬럼 조회 API
-    @GetMapping("/{columnsId}")
+    @GetMapping("/columns/{columnsId}")
     public ResponseEntity<ColumnsResponseDto> getColumns(@PathVariable Long columnsId) {
         ColumnsResponseDto columnsResponseDto = columnsService.getColumns(columnsId);
         if (columnsResponseDto != null) {
@@ -29,18 +31,27 @@ public class ColumnsController {
         }
     }
 
+    // 보드에서 모든 칼럼 조회
+    @GetMapping("/board/{boardId}/columns")
+    public ResponseEntity<List<ColumnsResponseDto>> getColumnsByBoard(@PathVariable Long boardId) {
+        List<ColumnsResponseDto> columnsResponseDtos = columnsService.getColumnsByBoardId(boardId);
+        if (columnsResponseDtos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(columnsResponseDtos);
+    }
 
-    @PostMapping("")
+    @PostMapping("/board/{boardId}/columns/{columsid}")
     public ColumnsResponseDto createColumns (@RequestBody ColumnsRequestDto columnsRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return columnsService.createColumns(columnsRequestDto,userDetails.getUser());
     }
 
-    @PutMapping("/{columnsId}")
+    @PutMapping("/columns/{columnsId}")
     public ColumnsResponseDto updateColumns (@PathVariable Long columnsId,@RequestBody ColumnsRequestDto columnsRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return columnsService.updateColumns(columnsId, columnsRequestDto,userDetails.getUser());
     }
 
-    @DeleteMapping("/{columnsId}")
+    @DeleteMapping("/columns/{columnsId}")
     public ResponseEntity<ApiResponseDto> deleteColumns(@PathVariable Long columnsId,@AuthenticationPrincipal UserDetailsImpl userDetails){
         try{
             columnsService.deleteColumns(columnsId, userDetails.getUser());

@@ -199,6 +199,64 @@
       `;
     columnContainer.appendChild(newColumn);
   }
+
+  // 페이지 로딩 시 실행될 함수
+  window.onload = function() {
+    // 보드의 아이디 가져오기 (가정)
+    const boardId = extractBoardIdFromURL(); /* 보드의 아이디 가져오는 로직 */;
+
+    function extractBoardIdFromURL() {
+      const url = window.location.href;
+      const boardIdPattern = /\/boards\/(\d+)/;
+      const matches = url.match(boardIdPattern);
+
+      if (matches && matches.length >= 2) {
+        return matches[1]; // 두 번째 항목이 보드 아이디입니다.
+      }
+
+      return null; // 보드 아이디를 추출할 수 없는 경우
+    }
+
+    // 서버에서 보드의 모든 칼럼 정보를 가져오는 API 호출
+    $.ajax({
+      type: "GET",
+      url: `/api/board/${boardId}/columns`,
+      dataType: "json"
+    }).done(function(columns) {
+      const columnContainer = document.getElementById('column-container');
+
+      // 가져온 칼럼 정보를 화면에 추가
+      columns.forEach(column => {
+        const columnDiv = document.createElement('div');
+        columnDiv.className = 'column';
+
+        const listDiv = document.createElement('div');
+        listDiv.className = 'list';
+        listDiv.innerHTML = `
+          <a href="/api/board/${boardId}/columns/${column.id}" class="col-3">
+            <div class="list-title">
+              <span>${column.title}</span>
+              <div class="delete-board-btn" onclick="deleteColumn(this, ${column.id})">x</div>
+            </div>
+          </a>
+          <div>
+            <!-- 여기에 카드 정보를 추가하는 부분을 추가해주세요 -->
+            <!-- 예: <div class="card">${cardTitle}</div> -->
+            <div class="add-task-btn" onclick="addTask(this)">+</div>
+          </div>
+        `;
+
+        columnDiv.appendChild(listDiv);
+        columnContainer.appendChild(columnDiv);
+      });
+    }).fail(function(request, status, error) {
+      console.log(status);
+      console.log(error);
+      alert("에러가 발생했습니다.");
+    });
+  }
+
+
 </script>
 </body>
 </html>

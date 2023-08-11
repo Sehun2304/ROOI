@@ -10,6 +10,9 @@ import com.rooi.rooi.repository.ColumnsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class ColumnsService {
@@ -28,6 +31,14 @@ public class ColumnsService {
             return null;}
     }
 
+    // 보드에서 해당 아이디의 모든 칼럼을 조회하는 메서드
+    public List<ColumnsResponseDto> getColumnsByBoardId(Long boardId) {
+        List<Columns> columns = columnsRepository.findByBoardId(boardId);
+        return columns.stream()
+                .map(ColumnsResponseDto::new) // Assuming ColumnsResponseDto constructor accepts Columns entity
+                .collect(Collectors.toList());
+    }
+
     public ColumnsResponseDto createColumns(ColumnsRequestDto requestDto, User user){
         Board board = boardRepository.findById(requestDto.getBoardId()).get();
 
@@ -36,7 +47,6 @@ public class ColumnsService {
 
         columnsRepository.save(columns);
         return new ColumnsResponseDto(columns);
-
 
     }
 
