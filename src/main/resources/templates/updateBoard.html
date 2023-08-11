@@ -101,7 +101,7 @@
                 .then(response => response.json())
                 .then(data => console.log('Success:', data))
             alert(`보드 "${title}" 이(가) 수정 완료되었습니다!`);
-            location.reload();
+            location.href="/boards/"+boardId;
         } catch (error) {
             console.error(error);
         }

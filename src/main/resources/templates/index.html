@@ -101,8 +101,8 @@
       <a href = "/">
         <button >home</button>
       </a>
-      <button onclick="logout()">Logout</button>
-      <button onclick="openProfile()" id="profile-btn">My Profile</button>
+      <button onclick="updateBoard()">보드 수정</button>
+      <button onclick="deleteBoard()" id="profile-btn">보드 삭제</button>
     </div>
   </div>
 
@@ -156,11 +156,7 @@
     window.location.href = "/post/manage";
   }
 
-  function logout() {
-    // 토큰 삭제
-    Cookies.remove('Authorization', { path: '/' });
-    window.location.href = "/user/login-page";
-  }
+
 
   function openProfile() {
     window.location.href = "/user/profile";
@@ -197,22 +193,6 @@
     newTask.textContent = 'New Task';
     list.insertBefore(newTask, button);
   }
-
-  // 123
-  // function addColumn() {
-  //   const columnContainer = document.querySelector('.board');
-  //   const newColumn = document.createElement('div');
-  //   newColumn.className = 'list';
-  //   newColumn.innerHTML = `
-  //       <div class="list-title">
-  //         <span>New Column</span>
-  //         <div class="delete-board-btn" onclick="deleteColumn(this)">x</div>
-  //       </div>
-  //       <div class="card">New Task</div>
-  //       <div class="add-task-btn" onclick="addTask(this)">+</div>
-  //     `;
-  //   columnContainer.appendChild(newColumn);
-  // }
 
   function addColumn() {
     let data = {
@@ -292,6 +272,16 @@
 
               }
             });
+  }
+
+  // ============ 보드 삭제 ===============
+  function deleteBoard() {
+    window.location.href = "/boards/delete/"+board_id;
+  }
+
+  // ============ 보드 수정 ===============
+  function updateBoard() {
+    window.location.href = "/boards/update/"+board_id;
   }
 </script>
 </body>
