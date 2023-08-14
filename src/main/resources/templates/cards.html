@@ -73,24 +73,24 @@
     </div>
 </div>
 <hr>
-    <div class="comments-section">
-        <div style="margin-bottom: 10px">Comments</div>
-        <div class="comment-list" style="margin-bottom: 10px">
-            <ul th:each="comment : ${card.commentList}" style="border-bottom: solid 1px gray; padding-bottom: 15px">
-                    <span th:text="${comment.username}"></span> : <span th:text="${comment.content}"></span>
-                <div style="float: right">
-                    <button type="submit" class="btn btn-dark" id="comment-update-btn" onclick="" style="width: 55px; font-size: 12px">수 정</button>
-                    <button type="submit" class="btn btn-dark" id="comment-delete-btn" onclick="deleteComment()" style="width: 55px; font-size: 12px">삭 제</button>
-                </div>
-            </ul>
-        </div>
-        <div>
-            <input type="text" id="comment-input" placeholder="Enter your comment" style="width: 80%; height: 30px">
-            <button onclick="addComment()" style="height: 30px; float: right ">Add Comment</button>
-        </div>
-
-
+<div class="comments-section">
+    <div style="margin-bottom: 10px">Comments</div>
+    <div class="comment-list" style="margin-bottom: 10px">
+        <ul th:each="comment : ${card.commentList}" style="border-bottom: solid 1px gray; padding-bottom: 15px">
+            <span th:text="${comment.username}"></span> : <span th:text="${comment.content}"></span>
+            <div style="float: right">
+                <button type="submit" class="comment-update-btn" id="comment-update-btn" onclick="editComment()" style="width: 55px; font-size: 12px">수 정</button>
+                <button type="submit" class="comment-delete-btn" id="comment-delete-btn" data-comment-id="${comment.id}" onclick="deleteComment(event)" style="width: 55px; font-size: 12px">삭 제</button>
+            </div>
+        </ul>
     </div>
+    <div>
+        <input type="text" id="comment-input" placeholder="Enter your comment" style="width: 80%; height: 30px">
+        <button onclick="addComment()" style="height: 30px; float: right ">Add Comment</button>
+    </div>
+
+
+</div>
 
 
 <!--        <div class="col-md-12" id="edit-box" style="">-->
@@ -215,7 +215,84 @@
         window.location.href = `/card/${cardId}`
     }
 
+    // $(document).ready(function() {
+    //     // 댓글 삭제 버튼에 클릭 이벤트 리스너 추가
+    //     $('.comment-delete-btn').click(function() {
+    //         const commentId = $(this).data('comment-id');
+    //         const confirmDelete = confirm('이 댓글을 삭제하시겠습니까?');
+    //         if (confirmDelete) {
+    //             deleteComment(commentId);
+    //         }
+    //     });
+    // });
+    //
+    // async function deleteComment(commentId) {
+    //     try {
+    //         const response = await fetch(`/api/card/comment/${commentId}`, {
+    //             method: 'DELETE',
+    //         });
+    //
+    //         if (response.ok) {
+    //             const responseData = await response.json();
+    //             console.log('댓글 삭제 성공:', responseData.message);
+    //             window.location.reload(); // 댓글 목록을 업데이트하기 위해 페이지를 새로고침합니다.
+    //         } else {
+    //             throw new Error('댓글 삭제 실패');
+    //         }
+    //     } catch (error) {
+    //         console.error('댓글 삭제 오류:', error);
+    //     }
+    // }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButtons = document.querySelectorAll('.comment-delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const commentId = button.getAttribute('data-comment-id');
+                deleteComment(commentId);
+            });
+        });
+
+        // const editButtons = document.querySelectorAll('.comment-update-btn');
+        // editButtons.forEach(button => {
+        //     button.addEventListener('click', () => {
+        //         const commentId = button.getAttribute('data-comment-id');
+        //         editComment(commentId);
+        //     });
+        // });
+    });
+
+    async function deleteComment(event) {
+        const confirmDelete = confirm('이 댓글을 삭제하시겠습니까?');
+        if (confirmDelete) {
+            try {
+                // 서버로 댓글 삭제 요청을 보냅니다.
+                const commentIdString = event.target.getAttribute('data-comment-id');
+                const commentId = parseInt(commentIdString);
+
+                if (isNaN(commentId)) {
+                    console.log('Invalid comment ID:', commentIdString);
+                    return;
+                }
+
+                console.log('Deleting comment with ID:', commentId);
+
+                const response = await fetch(`/api/card/comment/${commentId}`, {
+                    method: 'DELETE',
+                });
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    console.log('댓글 삭제 성공:', responseData.message);
+                    window.location.reload(); // 댓글 목록을 업데이트하기 위해 페이지를 새로고침합니다.
+                } else {
+                    throw new Error('댓글 삭제 실패');
+                }
+            } catch (error) {
+                console.error('댓글 삭제 오류:', error);
+            }
+        }
+    }
 </script>
 </body>
 </html>
