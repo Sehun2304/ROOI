@@ -8,12 +8,14 @@ import com.rooi.rooi.entity.User;
 import com.rooi.rooi.repository.CardRepository;
 import com.rooi.rooi.repository.CommentRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.RejectedExecutionException;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -31,6 +33,7 @@ public class CommentService {
         if (!comment.getUser().getId().equals(user.getId())) {
             throw new RejectedExecutionException("작성자만 수정 가능합니다");
         }
+        log.info(requestDto.getContent());
         comment.setContents(requestDto.getContent());
         commentRepository.save(comment);
     }
