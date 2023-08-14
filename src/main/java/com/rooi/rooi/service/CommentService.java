@@ -26,21 +26,20 @@ public class CommentService {
         commentRepository.save(comment);
         return new CommentResponseDto(comment);
     }
-    public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
+    public void updateComment(Long commentId, CommentRequestDto requestDto, User user) {
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         if (!comment.getUser().getId().equals(user.getId())) {
             throw new RejectedExecutionException("작성자만 수정 가능합니다");
         }
         comment.setContents(requestDto.getContent());
         commentRepository.save(comment);
-        return new CommentResponseDto(comment);
     }
-    public CommentResponseDto deleteComment(Long id, User user) {
+
+    public void deleteComment(Long id, User user) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다"));
         if (!comment.getUser().getId().equals(user.getId())) {
             throw new RejectedExecutionException("작성자만 삭제 가능합니다");
         }
         commentRepository.delete(comment);
-        return new CommentResponseDto();
     }
 }

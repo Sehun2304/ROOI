@@ -12,12 +12,14 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class CommentResponseDto extends Timestamped {
+    private Long id;
     private String username;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public CommentResponseDto(Comment comment) {
+        this.id = comment.getComment_id();
         this.username = comment.getUser().getUsername();
         this.content = comment.getContents();
         this.createdAt = comment.getCreatedAt();

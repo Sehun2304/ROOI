@@ -79,8 +79,8 @@
         <ul th:each="comment : ${card.commentList}" style="border-bottom: solid 1px gray; padding-bottom: 15px">
             <span th:text="${comment.username}"></span> : <span th:text="${comment.content}"></span>
             <div style="float: right">
-                <button type="submit" class="comment-update-btn" id="comment-update-btn" onclick="editComment()" style="width: 55px; font-size: 12px">수 정</button>
-                <button type="submit" class="comment-delete-btn" id="comment-delete-btn" data-comment-id="${comment.id}" onclick="deleteComment(event)" style="width: 55px; font-size: 12px">삭 제</button>
+                <button type="submit" class="comment-update-btn" id="comment-update-btn" th:attr="data-comment-id=${comment.id}" onclick="editComment()" style="width: 55px; font-size: 12px">수 정</button>
+                <button type="submit" class="comment-delete-btn" id="comment-delete-btn" th:attr="data-comment-id=${comment.id}" style="width: 55px; font-size: 12px">삭 제</button>
             </div>
         </ul>
     </div>
@@ -249,10 +249,32 @@
         deleteButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const commentId = button.getAttribute('data-comment-id');
-                deleteComment(commentId);
+                // deleteComment(commentId);
+                console.log(commentId)
+                const confirmDelete = confirm('이 댓글을 삭제하시겠습니까?');
+                if (confirmDelete) {
+                    $.ajax({
+                        type: "DELETE",
+                        url:'/api/card/comment/'+commentId,
+                        dataType:"json"
+                    }).done(function(res){
+                        console.log(res)
+                        console.log(res.status)
+                        if (res.statusCode === 200) {
+                            alert(res.message)
+                            window.location.reload();
+                        } else if (res.statusCode === 400) {
+                            alert(res.message)
+                        }
+                    }).fail(function (request, status, error){
+                        console.log(status)
+                        console.log(error)
+                        alert("에러가 발생했습니다.");
+                    });
+                }
             });
         });
-
+    });
         // const editButtons = document.querySelectorAll('.comment-update-btn');
         // editButtons.forEach(button => {
         //     button.addEventListener('click', () => {
@@ -260,39 +282,39 @@
         //         editComment(commentId);
         //     });
         // });
-    });
 
-    async function deleteComment(event) {
-        const confirmDelete = confirm('이 댓글을 삭제하시겠습니까?');
-        if (confirmDelete) {
-            try {
-                // 서버로 댓글 삭제 요청을 보냅니다.
-                const commentIdString = event.target.getAttribute('data-comment-id');
-                const commentId = parseInt(commentIdString);
 
-                if (isNaN(commentId)) {
-                    console.log('Invalid comment ID:', commentIdString);
-                    return;
-                }
-
-                console.log('Deleting comment with ID:', commentId);
-
-                const response = await fetch(`/api/card/comment/${commentId}`, {
-                    method: 'DELETE',
-                });
-
-                if (response.ok) {
-                    const responseData = await response.json();
-                    console.log('댓글 삭제 성공:', responseData.message);
-                    window.location.reload(); // 댓글 목록을 업데이트하기 위해 페이지를 새로고침합니다.
-                } else {
-                    throw new Error('댓글 삭제 실패');
-                }
-            } catch (error) {
-                console.error('댓글 삭제 오류:', error);
-            }
-        }
-    }
+    // async function deleteComment(event) {
+    //     const confirmDelete = confirm('이 댓글을 삭제하시겠습니까?');
+    //     if (confirmDelete) {
+    //         try {
+    //             // 서버로 댓글 삭제 요청을 보냅니다.
+    //             const commentIdString = event.target.getAttribute('data-comment-id');
+    //             const commentId = parseInt(commentIdString);
+    //
+    //             if (isNaN(commentId)) {
+    //                 console.log('Invalid comment ID:', commentIdString);
+    //                 return;
+    //             }
+    //
+    //             console.log('Deleting comment with ID:', commentId);
+    //
+    //             const response = await fetch(`/api/card/comment/${commentId}`, {
+    //                 method: 'DELETE',
+    //             });
+    //
+    //             if (response.ok) {
+    //                 const responseData = await response.json();
+    //                 console.log('댓글 삭제 성공:', responseData.message);
+    //                 window.location.reload(); // 댓글 목록을 업데이트하기 위해 페이지를 새로고침합니다.
+    //             } else {
+    //                 throw new Error('댓글 삭제 실패');
+    //             }
+    //         } catch (error) {
+    //             console.error('댓글 삭제 오류:', error);
+    //         }
+    //     }
+    // }
 </script>
 </body>
 </html>
